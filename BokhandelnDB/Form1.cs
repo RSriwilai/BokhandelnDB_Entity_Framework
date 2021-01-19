@@ -1,14 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace BokhandelnDB
 {
@@ -17,6 +12,7 @@ namespace BokhandelnDB
         private List<Böcker> böcker;
         //db = new BokhandelContext();
         private readonly BokhandelContext db;
+        private Butiker activeButik = null; //
         public Form1()
         {
             InitializeComponent();
@@ -52,7 +48,7 @@ namespace BokhandelnDB
         {
             if (e.Node.Tag is Butiker butik)
             {
-                
+                activeButik = butik;
                 textBoxButik.Text = butik.Butiksnamn;
                 textBoxAdress.Text = butik.Address;
 
@@ -65,7 +61,7 @@ namespace BokhandelnDB
 
                     var comboBoxCell = dataGridView1.Rows[rowIndex].Cells["Titel"] as DataGridViewComboBoxCell;
                     comboBoxCell.ValueType = typeof(Böcker);
-                    comboBoxCell.DisplayMember ="Titel";
+                    comboBoxCell.DisplayMember = "Titel";
                     comboBoxCell.ValueMember = "This";
                     foreach (Böcker böcker in böcker)
                     {
@@ -103,7 +99,7 @@ namespace BokhandelnDB
                 dataGridView1.Rows[e.RowIndex].Cells["Författare"].Value = bok.Författare.Förnamn + " " + bok.Författare.Efternamn;
                 dataGridView1.Rows[e.RowIndex].Cells["Vikt"].Value = bok.ViktGram;
                 dataGridView1.Rows[e.RowIndex].Cells["Sidor"].Value = bok.Sidor;
-                var lager = dataGridView1.Rows[e.RowIndex].Tag; //as LagerSaldo;
+                var lager = dataGridView1.Rows[e.RowIndex].Tag as LagerSaldo;
 
 
             }
@@ -111,42 +107,54 @@ namespace BokhandelnDB
 
         private void dataGridView1_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Delete)
+            if (e.KeyCode == Keys.Delete)
             {
-                var result =MessageBox.Show("Do you want to delete this row?", "Delete row", MessageBoxButtons.YesNo);
+                var result = MessageBox.Show("Do you want to delete this row?", "Delete row", MessageBoxButtons.YesNo);
 
                 if (result == DialogResult.Yes)
                 {
                     using (var db = new BokhandelContext())
-                    foreach (DataGridViewRow item in this.dataGridView1.SelectedRows)
-                    {
-                        dataGridView1.Rows.RemoveAt(item.Index);
-                        var bok = db.LagerSaldos.First();
-                        db.LagerSaldos.Remove(bok);
-                        db.SaveChanges();
+                        foreach (DataGridViewRow item in this.dataGridView1.SelectedRows)
+                        {
+                            dataGridView1.Rows.RemoveAt(item.Index);
+                            var bok = db.LagerSaldos.First();
+                            db.LagerSaldos.Remove(bok);
+                            db.SaveChanges();
 
-                    }
+                        }
                 }
             }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-           // var lager = new LagerSaldo() { ButikId = 1, };
-
-            int rowIndex = dataGridView1.Rows.Add();
-
-            
-
-            var comboBoxCell = dataGridView1.Rows[rowIndex].Cells["Titel"] as DataGridViewComboBoxCell;
-            comboBoxCell.ValueType = typeof(Böcker);
-            comboBoxCell.DisplayMember = "Titel";
-            comboBoxCell.ValueMember = "This";
-
-           
-            foreach (var item in böcker)
+            if (activeButik != null)
             {
-                comboBoxCell.Items.Add(item);
+
+                var lager = new LagerSaldo()
+                {
+                    //ButikId = 1,
+
+                    Isbn =   //"9781846270482" //Guid.NewGuid().ToString().Substring(0, 13)
+
+
+                };
+
+                activeButik.LagerSaldos.Add(lager);
+
+                int rowIndex = dataGridView1.Rows.Add();
+                dataGridView1.Rows[rowIndex].Tag = lager;
+
+                var comboBoxCell = dataGridView1.Rows[rowIndex].Cells["Titel"] as DataGridViewComboBoxCell;
+                comboBoxCell.ValueType = typeof(Böcker);
+                comboBoxCell.DisplayMember = "Titel";
+                comboBoxCell.ValueMember = "This";
+
+
+                foreach (var item in böcker)
+                {
+                    comboBoxCell.Items.Add(item);
+                }
             }
 
         }
