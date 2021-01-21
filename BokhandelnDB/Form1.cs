@@ -12,7 +12,7 @@ namespace BokhandelnDB
         private List<Böcker> böcker;
         //db = new BokhandelContext();
         private readonly BokhandelContext db;
-        private Butiker activeButik = null; //
+        private Butiker activeButik = null;
         public Form1()
         {
             InitializeComponent();
@@ -49,6 +49,7 @@ namespace BokhandelnDB
             if (e.Node.Tag is Butiker butik)
             {
                 activeButik = butik;
+                
                 textBoxButik.Text = butik.Butiksnamn;
                 textBoxAdress.Text = butik.Address;
 
@@ -67,7 +68,7 @@ namespace BokhandelnDB
                     {
                         comboBoxCell.Items.Add(böcker);
                     }
-
+                    
                     dataGridView1.Rows[rowIndex].Cells["Titel"].Value = lagersaldo.IsbnNavigation;
                     dataGridView1.Rows[rowIndex].Cells["ISBN"].Value = lagersaldo.IsbnNavigation.Isbn13;
                     dataGridView1.Rows[rowIndex].Cells["Språk"].Value = lagersaldo.IsbnNavigation.Språk;
@@ -130,14 +131,13 @@ namespace BokhandelnDB
         {
             if (activeButik != null)
             {
-
-                var lager = new LagerSaldo()
+                var lager = new LagerSaldo
                 {
-                    //ButikId = 1,
-
-                    Isbn =   //"9781846270482" //Guid.NewGuid().ToString().Substring(0, 13)
-
-
+                    ButikId = activeButik.IdentityId,
+                    
+                    Isbn = 
+                    
+                   
                 };
 
                 activeButik.LagerSaldos.Add(lager);
