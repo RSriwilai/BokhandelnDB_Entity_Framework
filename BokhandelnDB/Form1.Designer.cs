@@ -163,7 +163,7 @@
             this.Författare,
             this.Vikt,
             this.Sidor});
-            this.dataGridView1.Location = new System.Drawing.Point(3, 2);
+            this.dataGridView1.Location = new System.Drawing.Point(5, 5);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(785, 366);
             this.dataGridView1.TabIndex = 0;
@@ -255,6 +255,7 @@
         private System.Windows.Forms.TextBox textBoxButik;
         private System.Windows.Forms.Label labelButikId;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Button buttonAddRow;
         private System.Windows.Forms.DataGridViewComboBoxColumn Titel;
         private System.Windows.Forms.DataGridViewTextBoxColumn ISBN;
         private System.Windows.Forms.DataGridViewTextBoxColumn Språk;
@@ -263,7 +264,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Författare;
         private System.Windows.Forms.DataGridViewTextBoxColumn Vikt;
         private System.Windows.Forms.DataGridViewTextBoxColumn Sidor;
-        private System.Windows.Forms.Button buttonAddRow;
     }
 }
 
