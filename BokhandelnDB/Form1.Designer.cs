@@ -45,6 +45,7 @@
             this.Författare = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Vikt = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Sidor = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Antal = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -162,8 +163,9 @@
             this.Utgivningsdatum,
             this.Författare,
             this.Vikt,
-            this.Sidor});
-            this.dataGridView1.Location = new System.Drawing.Point(5, 5);
+            this.Sidor,
+            this.Antal});
+            this.dataGridView1.Location = new System.Drawing.Point(0, 2);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(785, 366);
             this.dataGridView1.TabIndex = 0;
@@ -220,6 +222,11 @@
             this.Sidor.Name = "Sidor";
             this.Sidor.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
+            // Antal
+            // 
+            this.Antal.HeaderText = "Antal";
+            this.Antal.Name = "Antal";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -264,6 +271,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Författare;
         private System.Windows.Forms.DataGridViewTextBoxColumn Vikt;
         private System.Windows.Forms.DataGridViewTextBoxColumn Sidor;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Antal;
     }
 }
 

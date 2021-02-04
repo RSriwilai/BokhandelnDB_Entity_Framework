@@ -12,6 +12,8 @@ namespace BokhandelnDB
         private List<Böcker> böcker;
         private readonly BokhandelContext db;
         private Butiker activeButik = null;
+        private bool isNewBook = false;
+        
         public Form1()
         {
             InitializeComponent();
@@ -77,43 +79,68 @@ namespace BokhandelnDB
                     dataGridView1.Rows[rowIndex].Cells["Författare"].Value = lagersaldo.IsbnNavigation.Författare.Förnamn + " " + lagersaldo.IsbnNavigation.Författare.Efternamn;
                     dataGridView1.Rows[rowIndex].Cells["Vikt"].Value = lagersaldo.IsbnNavigation.ViktGram;
                     dataGridView1.Rows[rowIndex].Cells["Sidor"].Value = lagersaldo.IsbnNavigation.Sidor;
-                 
+                    dataGridView1.Rows[rowIndex].Cells["Antal"].Value = lagersaldo.Antal;
+
                 }
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (activeButik != null)
+            {
+
+                int rowIndex = dataGridView1.Rows.Add();
+                var comboBoxCell = dataGridView1.Rows[rowIndex].Cells["Titel"] as DataGridViewComboBoxCell;
+                comboBoxCell.ValueType = typeof(Böcker);
+                comboBoxCell.DisplayMember = "Titel";
+                comboBoxCell.ValueMember = "This";
+                foreach (var item in böcker)
+                {
+                    comboBoxCell.Items.Add(item);
+                }
+                isNewBook = true;
             }
         }
 
         private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
+
             var cell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            
-            if (cell is DataGridViewComboBoxCell comboBox)
+
+            if (e.ColumnIndex == 0)
             {
-                var bok = comboBox.Value as Böcker;
-                dataGridView1.Rows[e.RowIndex].Cells["ISBN"].Value = bok.Isbn13;
-                dataGridView1.Rows[e.RowIndex].Cells["Språk"].Value = bok.Språk;
-                dataGridView1.Rows[e.RowIndex].Cells["Pris"].Value = bok.Pris + " kr";
-                dataGridView1.Rows[e.RowIndex].Cells["Utgivningsdatum"].Value = bok.Utgivningsdatum;
-                dataGridView1.Rows[e.RowIndex].Cells["Författare"].Value = bok.Författare.Förnamn + " " + bok.Författare.Efternamn;
-                dataGridView1.Rows[e.RowIndex].Cells["Vikt"].Value = bok.ViktGram;
-                dataGridView1.Rows[e.RowIndex].Cells["Sidor"].Value = bok.Sidor;
+                var bok = dataGridView1.Rows[e.RowIndex].Cells[0].Value as Böcker;
+
+                dataGridView1.Rows[e.RowIndex].Cells[1].Value = bok.Isbn13;
+                dataGridView1.Rows[e.RowIndex].Cells[2].Value = bok.Språk;
+                dataGridView1.Rows[e.RowIndex].Cells[3].Value = bok.Pris + " kr";
+                dataGridView1.Rows[e.RowIndex].Cells[4].Value = bok.Utgivningsdatum;
+                dataGridView1.Rows[e.RowIndex].Cells[5].Value = bok.Författare.Förnamn + " " + bok.Författare.Efternamn;
+                dataGridView1.Rows[e.RowIndex].Cells[6].Value = bok.ViktGram;
+                dataGridView1.Rows[e.RowIndex].Cells[7].Value = bok.Sidor;
+            }
+            else if (e.ColumnIndex == 8)
+            {
+                int antal;
+
+                Int32.TryParse(cell.Value.ToString(), out antal);
 
                 var lager = dataGridView1.Rows[e.RowIndex].Tag as LagerSaldo;
-
-                if (lager == null)
+                if (lager != null)
                 {
-                    try
-                    {
-                        db.Database.ExecuteSqlInterpolated($"Insert into LagerSaldo (ButikID, ISBN, Antal) values({activeButik.IdentityId}, {bok.Isbn13}, 1)");
-                    }
-                    catch (Exception)
-                    {
-                        MessageBox.Show("Cannot dublicate items");
-                        dataGridView1.Rows.RemoveAt(e.RowIndex);
-                    }
+                    lager.Antal = (int?)antal;
                 }
 
+                if (isNewBook)
+                {
+                    var book = dataGridView1.Rows[e.RowIndex].Cells[0].Value as Böcker;
+
+                    db.Database.ExecuteSqlInterpolated($"Insert into LagerSaldo (ButikID, ISBN, Antal) values({activeButik.IdentityId}, {book.Isbn13}, {antal})");
+                }
             }
+
         }
         private void dataGridView1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -134,22 +161,6 @@ namespace BokhandelnDB
                     }
                 }
 
-            }
-        }
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (activeButik != null)
-            {
-
-                int rowIndex = dataGridView1.Rows.Add();
-                var comboBoxCell = dataGridView1.Rows[rowIndex].Cells["Titel"] as DataGridViewComboBoxCell;
-                comboBoxCell.ValueType = typeof(Böcker);
-                comboBoxCell.DisplayMember = "Titel";
-                comboBoxCell.ValueMember = "This";
-                foreach (var item in böcker)
-                {
-                    comboBoxCell.Items.Add(item);
-                }
             }
         }
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)

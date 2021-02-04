@@ -22,6 +22,7 @@ namespace BokhandelnDB
         public virtual DbSet<Författare> Författares { get; set; }
         public virtual DbSet<LagerSaldo> LagerSaldos { get; set; }
 
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Server=DESKTOP-J3GN1M3;Database=Bokhandel;Trusted_Connection=True;");
